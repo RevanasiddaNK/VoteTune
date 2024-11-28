@@ -18,8 +18,9 @@
         "name": "next"
       }
     ],
+    "baseUrl": "./", // Set base directory for relative imports
     "paths": {
-      "@/*": ["./*"]
+      "@app/*": ["src/*"] // Map '@app' to the 'src' folder
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
