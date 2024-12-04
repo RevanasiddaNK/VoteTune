@@ -9,16 +9,16 @@ const upvoteSchema = z.object({
     streamId : z.string(),
 })
 
-
 export async function POST(req : NextRequest){
 
-    const session = await getServerSession();
+        const session = await getServerSession();
         const user = await prismaClient.user.findFirst({
             where: {
                 email: session?.user?.email ?? "",
             }
-        })
+        });
 
+        //console.log("upvote user", user)
         if(!user){
             return NextResponse.json({
                 message : "unauthenticated"
@@ -38,7 +38,9 @@ export async function POST(req : NextRequest){
                 }
             })
 
-            
+            return NextResponse.json({
+                message : "upvoted successfully"
+            })
         }
         catch(err){
             return NextResponse.json({

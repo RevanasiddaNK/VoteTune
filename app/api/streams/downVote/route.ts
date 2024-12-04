@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { Stream } from "stream";
 import {z} from 'zod'
 
-const upvoteSchema = z.object({
+const downvoteSchema = z.object({
     streamId : z.string(),
 })
 
@@ -16,7 +16,7 @@ export async function POST(req : NextRequest){
                 email: session?.user?.email ?? "",
             }
         })
-
+        //console.log("Downvote user", user)
         if(!user){
             return NextResponse.json({
                 message : "unauthenticated"
@@ -29,7 +29,7 @@ export async function POST(req : NextRequest){
 
         try{
 
-            const data =  upvoteSchema.parse( await req.json());
+            const data =  downvoteSchema.parse( await req.json());
             await prismaClient.upvote.delete({
                 where : {
                     userId_streamId :  {
@@ -37,9 +37,11 @@ export async function POST(req : NextRequest){
                         userId : user.id
                     }
                 }
-              
-            })
-
+            });
+            
+            return NextResponse.json({
+                message : "upvoted successfully"
+            });
             
         }
         catch(err){

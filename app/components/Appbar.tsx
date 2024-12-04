@@ -1,32 +1,36 @@
 'use client';
-
+import { Inter } from 'next/font/google';
+const inter = Inter({ subsets: ['latin'] });
 import { signIn, signOut, useSession } from 'next-auth/react';
-
+import { Button } from '@/components/ui/button';
 export default function Appbar() {
 
 const session = useSession();
 
   return (
     <div className="flex justify-between m-4">
-      <div>
-        <h2>VoteTune</h2>
-      </div>
 
+      
       <div>
-
+     
         { !session.data && 
-            <button onClick={() => signIn()}
-            className="px-6 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition ease-in-out duration-200"
-            >SignIn</button>
+            <Button onClick={() => signIn()}
+            size="lg"
+            className="bg-purple-600 hover:bg-purple-700 text-white"
+            >SignIn</Button>
         }
 
         { session.data && 
-            <button onClick={() => signOut()}
-            className="px-6 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition ease-in-out duration-200"
-            >SignOut</button>
+            <Button onClick={() => signOut()}
+            size="lg"
+            className="bg-purple-600 hover:bg-purple-700 text-white"
+            >SignOut</Button>
         }
 
+
+
       </div>
+
     </div>
   );
 }
