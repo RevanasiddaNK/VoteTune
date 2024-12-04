@@ -32,17 +32,27 @@ enum Provider {
 }
 
 model Stream {
-  id             String     @id @default(uuid())
-  title          String     @default("Title not found")
-  bigThumbnail   String     @default("https://img.lovepik.com/photo/45014/5040.jpg_wh860.jpg")
-  smallThumbnail String     @default("https://img.freepik.com/premium-photo/3d-youtube-icon-neon-black-wall_289054-64.jpg")
+  id             String         @id @default(uuid())
+  title          String         @default("Title not found")
+  bigThumbnail   String         @default("https://img.lovepik.com/photo/45014/5040.jpg_wh860.jpg")
+  smallThumbnail String         @default("https://img.freepik.com/premium-photo/3d-youtube-icon-neon-black-wall_289054-64.jpg")
   url            String
+  isPlayed       Boolean        @default(false)
+  playedAt       DateTime?
+  createdAt      DateTime       @default(now())
   extractedId    String
   type           StreamType
-  User           User?      @relation(fields: [userId], references: [id])
+  User           User?          @relation(fields: [userId], references: [id])
   userId         String?
-  active         Boolean    @default(true)
+  active         Boolean        @default(true)
   upvotes        Upvote[]
+  currentStream  currentStream?
+}
+
+model currentStream {
+  userId   String  @id
+  streamId String? @unique
+  stream   Stream? @relation(fields: [streamId], references: [id])
 }
 
 enum StreamType {
@@ -54,7 +64,7 @@ model Upvote {
   id       String  @id @default(uuid())
   User     User?   @relation(fields: [userId], references: [id])
   userId   String?
-  Stream   Stream? @relation(fields: [streamId], references: [id])
+  Stream   Stream? @relation(fields: [streamId], references: [id], onDelete: Cascade)
   streamId String?
 
   @@unique([userId, streamId])

@@ -20,7 +20,6 @@ export default function StreamView(
           </h1>
           <div className="flex space-x-2">
             <ShareButton creatorId = {creatorId} />
-           
           </div>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
