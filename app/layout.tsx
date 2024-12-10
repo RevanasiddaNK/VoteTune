@@ -38,10 +38,17 @@ export default function RootLayout({
       <body className={`${inter.className} bg-gradient-to-br from-purple-50 to-indigo-100 dark:from-purple-900 dark:to-indigo-950 min-h-screen`}>
         <ThemeProvider attribute="class" defaultTheme="dark" enableSystem>
           <div className="container mx-auto px-4 py-8">
-            <header className="flex justify-between items-center mb-8">
-            <h1 className="text-3xl font-bold text-purple-800 dark:text-purple-300">VoteTune</h1>
+            
+            <header className="flex justify-between items-center mb-8 mx-4">
+            
+              <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-indigo-500 dark:from-purple-300 dark:to-indigo-400">
+                VoteTune
+              </h1>  
               <ThemeToggle />
+
+            
             </header>
+
             <Providers>
             <Toaster/>
               {children}

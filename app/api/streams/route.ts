@@ -116,7 +116,7 @@ export async function GET(req: NextRequest) {
     try {
         // Retrieve creatorId from query params
         const creatorId = req.nextUrl.searchParams.get("creatorId") || "";
-
+        //console.log(creatorId)
         // Fetch current user session
         const session = await getServerSession();
         if (!session || !session.user?.email) {

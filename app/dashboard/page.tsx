@@ -4,10 +4,10 @@ import { Inter } from 'next/font/google';
 const inter = Inter({ subsets: ['latin'] });
 export default function Dashboard() {
 
-  const creatorId = "1dbcf99c-b728-4b5a-88f4-a12c7874c59b";
+  const creatorId = "58abcec8-d847-47b4-8c7e-622f94d9f8fe";
 
   return (
-    <StreamView  creatorId = {creatorId} playVideo = {false} />
+    <StreamView  creatorId = {creatorId} playVideo = {true} />
   )
 }
 

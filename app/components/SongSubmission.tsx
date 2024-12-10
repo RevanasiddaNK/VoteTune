@@ -20,7 +20,7 @@ export default function SongSubmission(
 
       const res = await axios.post("../api/streams", 
         {
-          creatorId : "1dbcf99c-b728-4b5a-88f4-a12c7874c59b",
+          creatorId : creatorId,
           url: videoUrl
         },
         { withCredentials: true },
