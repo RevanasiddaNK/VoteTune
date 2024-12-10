@@ -1,5 +1,4 @@
 'use client'
-
 import { useState } from 'react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -21,7 +20,7 @@ export default function SongSubmission(
 
       const res = await axios.post("../api/streams", 
         {
-          creatorId : "e28bed57-2f14-4ff8-a8d2-fa4cfb8fae3e",
+          creatorId : "1dbcf99c-b728-4b5a-88f4-a12c7874c59b",
           url: videoUrl
         },
         { withCredentials: true },

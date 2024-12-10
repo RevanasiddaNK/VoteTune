@@ -3,13 +3,13 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   webpack: (config, { isServer }) => {
-    // Exclude Node.js core modules from the client-side build
-
-    experimental: {
-      turbopack : true
-    }
+    // Enable Turbopack in experimental mode
+    config.experimental = {
+      turbopack: true,
+    };
 
     if (!isServer) {
+      // Exclude Node.js core modules from the client-side build
       config.resolve.fallback = {
         fs: false,
         child_process: false,
@@ -17,6 +17,7 @@ const nextConfig: NextConfig = {
         path: false,
       };
     }
+    
     return config;
   },
 };

@@ -1,5 +1,4 @@
 'use client'
-
 import { ThemeProvider as NextThemesProvider } from 'next-themes'
 import { ThemeProviderProps } from 'next-themes'
 import { Inter } from 'next/font/google';

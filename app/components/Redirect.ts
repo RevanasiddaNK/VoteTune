@@ -1,5 +1,4 @@
-"use client";
-
+'use client'
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation"; // Correct hook for client-side navigation in Next.js 13+
 import { useEffect } from "react";

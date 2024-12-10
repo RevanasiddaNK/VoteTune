@@ -1,5 +1,4 @@
-'use client';
-
+'use client'
 import { useEffect, useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -34,7 +33,7 @@ export default function SongQueue(
   async function refreshStreams() {
     try {
       const res = await axios.get(`/api/streams?creatorId=${creatorId}`, { withCredentials: true });
-      console.log('Streams refreshed:', res.data.streams);
+      console.log('Streams refreshed:', res.data);
       setQueue(Array.isArray(res.data.streams) ? res.data.streams.sort((a : any, b: any) => b.upvotesCount - a.upvotesCount) : []); // Ensure it's an array
     } catch (err) {
       console.error('Error refreshing streams:', err);
