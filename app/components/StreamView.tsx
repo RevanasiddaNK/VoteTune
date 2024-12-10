@@ -1,29 +1,19 @@
 'use client'
 import SongSubmission from '@/app/components/SongSubmission'
-import SongQueue from '@/app/components//SongQueue'
-import CurrentlyPlaying from '@/app/components//CurrentlyPlaying'
+import SongQueue from './SongQueue'
+import CurrentlyPlaying from '@/app/components/CurrentlyPlaying'
 import ShareButton from '@/app/components//ShareButton'
 import { ThemeToggle } from '@/app/components/theme-toggle'
 
 import { Inter } from 'next/font/google';
+import { useState } from 'react'
+import axios from 'axios'
 const inter = Inter({ subsets: ['latin'] });
 
 export default function StreamView(
-    {creatorId}: { creatorId: string }
-) {
-
-  
-const playVideo = true;
-const currentVideo = {
-  extractedId: "TZ4gX0jWkI4",
-  bigImg: "",
-  title: "Huttu Wasteu Bodyge Full Video Song ",
-};
-const playNextLoader = false;
-const playNext = () => {
-  console.log("Play next video!");
-};
-
+    {creatorId, playVideo }: 
+    { creatorId: string, playVideo : boolean }
+){
    
   return (
     <div className="bg-gradient-to-br from-purple-100 to-indigo-200 dark:from-purple-900 dark:to-indigo-950 min-h-screen p-4">
@@ -40,13 +30,8 @@ const playNext = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         
-        <CurrentlyPlaying 
-            creatorId = {creatorId} 
-            playVideo={playVideo}
-            currentVideo={currentVideo}
-            playNext={playNext}
-            playNextLoader={playNextLoader}
-        />
+          
+          <CurrentlyPlaying creatorId={creatorId} playVideo = {false} />
 
           <SongSubmission  creatorId = {creatorId}/>
         

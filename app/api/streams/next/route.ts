@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 import { Stream } from "stream";
 
-export default async function GET(req : NextRequest){
+export async function GET(req : NextRequest){
 
     const session = await getServerSession();
     const user = await prismaClient.user.findFirst({
@@ -23,10 +23,10 @@ export default async function GET(req : NextRequest){
         );
     }
     
-    const creatorId = req.nextUrl.searchParams.get("creatorId")
+    //const creatorId = req.nextUrl.searchParams.get("creatorId")
     const maxUpvotedStream = await prismaClient.stream.findFirst({
         where : {
-            userId: creatorId,
+            userId: user.id,
         },
 
         orderBy : {
@@ -36,28 +36,31 @@ export default async function GET(req : NextRequest){
         }
     })
 
-    await Promise.all([
-
-        prismaClient.currentStream.upsert({
-            where : {
-                userId : user.id,
+    await prismaClient.$transaction(async (prisma) => {
+        // Perform upsert
+        await prisma.currentStream.upsert({
+          where: {
+            userId: user.id,
+          },
+          update: {
+            streamId: maxUpvotedStream?.id,
+          },
+          create: {
+            userId: user.id,
+            streamId: maxUpvotedStream?.id,
+          },
+        });
+      
+        // Delete the stream
+        if (maxUpvotedStream?.id) {
+          await prisma.stream.delete({
+            where: {
+              id: maxUpvotedStream.id,
             },
-            update : {
-                streamId : maxUpvotedStream?.id
-            },
-            create : {
-                userId : user.id,
-                streamId : maxUpvotedStream?.id
-            }
-        }),
-
-        prismaClient.stream.delete({
-            where : {
-                id : maxUpvotedStream?.id
-            }
-        })
-
-    ]);
+          });
+        }
+    });
+      
 
     return NextResponse.json({
         stream : maxUpvotedStream,

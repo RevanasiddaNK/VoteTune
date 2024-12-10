@@ -1,13 +1,14 @@
 'use client'
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Play } from "lucide-react";
 //@ts-ignore
 import YouTubePlayer from "youtube-player";
 import Image from "next/image";
+import axios from "axios";
 
-
+/*
 type Props = {
   playVideo: boolean;
   creatorId : string;
@@ -16,14 +17,49 @@ type Props = {
   playNextLoader: boolean;
   playNext: () => void;
 };
+*/
 
-export default function CurrentlyPlaying({
-  playVideo,
-  currentVideo,
-  playNext,
-  creatorId,
-  playNextLoader,
-}: Props) {
+export default function CurrentlyPlaying(
+  {creatorId, playVideo }: 
+  {creatorId: string, playVideo : boolean }) {
+    
+  type Video = {
+    title: string;
+    url: string;
+    bigThumbnail: string;
+    smallThumbnail: string;
+    extractedId: string;
+  };
+
+  const [currentVideo, setCurrentVideo] = useState<Video | null>(null);
+  const [playNextLoader, setPlayNextLoader] = useState(false);
+
+  const playNext = async () => {
+    //Get NextMax Upvoted video using call set currentVideo, 
+    try {
+      setPlayNextLoader(true);
+      const res = await axios.get("/api/streams/next", { withCredentials: true });
+      console.log('Streams refreshed:', res.data);
+      const videoData = res.data.stream;
+      setCurrentVideo({
+          title: videoData.title,
+          url:videoData.url,
+          bigThumbnail: videoData.bigThumbnail,
+          smallThumbnail: videoData.smallThumbnail,
+          extractedId:videoData.extractedId
+      });
+      setPlayNextLoader(false);
+    }
+    //setSpaceName(json.spaceName);
+    catch(error) {
+      console.log("error", "Something went wrong");
+    }
+  }
+
+  useEffect(()=>{
+    playNext();
+  },[]);
+
   const videoPlayerRef = useRef<HTMLDivElement>();
 
   useEffect(() => {
@@ -51,6 +87,7 @@ export default function CurrentlyPlaying({
   }, [currentVideo, videoPlayerRef]);
 
   return (
+
     <div className="space-y-4">
       
       <Card className="bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm">
@@ -69,8 +106,8 @@ export default function CurrentlyPlaying({
                   <Image
                     height={288}
                     width={288}
-                    alt={currentVideo.bigImg}
-                    src={currentVideo.bigImg}
+                    alt={currentVideo.bigThumbnail}
+                    src={currentVideo.bigThumbnail}
                     className="h-72 w-full rounded object-cover"
                   />
                   <p className="mt-2 text-center font-semibold">

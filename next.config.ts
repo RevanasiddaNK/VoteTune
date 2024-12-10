@@ -2,6 +2,9 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  images: {
+    domains: ['i.ytimg.com'], // Add the hostname of the image
+  },
   webpack: (config, { isServer }) => {
     // Enable Turbopack in experimental mode
     config.experimental = {

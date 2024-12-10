@@ -147,7 +147,7 @@ export async function GET(req: NextRequest) {
 
         // Fetch streams for the creator
         const [streams, activeStream] = await Promise.all([ 
-             prismaClient.stream.findMany({
+             await prismaClient.stream.findMany({
                 where: { userId: creatorId },
                 include: {
                     _count: { select: { upvotes: true } },
