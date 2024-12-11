@@ -6,9 +6,9 @@
 
 **VoteTune** provides a fun, interactive music experience for friends and communities. It offers features such as user authentication, playlist management, and a voting system to decide the next song to play. The app aims to create a unique and shared music experience, bringing friends closer together through music.
 
-### Key Features
+## Key Features
 
-- 🎤 **User Authentication**: Secure login system with JWT-based authentication.
+- 🎤 **User  Authentication**: Secure login system with JWT-based authentication.
 - 🎶 **Create/Join a Party**: Users can create a party or join an existing one with friends.
 - ➕ **Add Songs**: Users can add songs from YouTube to the party playlist.
 - 🗳️ **Vote System**: Members vote on which song should play next.
@@ -43,20 +43,3 @@ Clone the **VoteTune** repository to your local machine:
 
 ```bash
 git clone https://github.com/RevanasiddaNK/VoteTune.git
-
-
-### 2. Install dependencies
-cd VoteTune
-npm install
-
-###  3. Set up environment variables
-GOOGLE_CLIENT_ID = xxxxx
-GOOGLE_CLIENT_SECRET = xxxxx
-NEXTAUTH_SECRET = "xxxxx"
-DATABASE_URL="mysql://root:xxxxx@localhost:3306/votetune"
-
-### 4. Start the project
-npm run dev
-
-
-
