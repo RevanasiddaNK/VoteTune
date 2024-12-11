@@ -38,35 +38,33 @@
 
 1. clone the repository:
    ```bash
-   git clone https://github.com/code100x/muzer
+    git clone https://github.com/RevanasiddaNK/VoteTune.git
    ```
+   
 2. Navigate to the project directory:
    ```bash
-   cd muzer
+    cd VoteTune
    ```
-3. (optional) Start a PostgreSQL database using Docker:
+   
+3. Set up environment variables :
    ```bash
-   docker run -d \
-       --name muzer-db \
-       -e POSTGRES_USER=myuser \
-       -e POSTGRES_PASSWORD=mypassword \
-       -e POSTGRES_DB=mydatabase \
-       -p 5432:5432 \
-       postgres
+     GOOGLE_CLIENT_ID = xxxxx
+    GOOGLE_CLIENT_SECRET = xxxxx
+    NEXTAUTH_SECRET = "xxxxx"
+    DATABASE_URL="mysql://root:xxxxx@localhost:3306/votetune"
    ```
-   based on this command the connection url will be
-   ```
-   DATABASE_URL=postgresql://myuser:mypassword@localhost:5432/mydatabase?schema=public
-   ```
-4. Create a `.env` file based on the `.env.example` file and configure the `DATABASE_URL` with your postgreSQL connection string.
-5. Install dependencies:
+  
+4.  Install dependencies:
    ```bash
-   pnpm install
+   npm install
    ```
-6. Run database migrations:
+
+5. Run database migrations:
    ```bash
-   pnpm run prisma:migrate
+   npx prisma migrate dev
+   npx prisma generate
+
    ```
-7. Start the development server:
+6. Start the development server:
    ```bash
-   pnpm run dev
+   npm run dev
