@@ -56,7 +56,7 @@
   
 4.  Install dependencies:
    ```bash
-     npm install
+       npm install
    ```
 
 5. Run database migrations:
