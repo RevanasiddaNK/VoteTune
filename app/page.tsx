@@ -1,27 +1,45 @@
 'use client';
 
-import { Button } from "@/components/ui/button"
-import { Music, Users, ThumbsUp, PlusCircle } from 'lucide-react'
-import Image from 'next/image'
-import Appbar from "./components/Appbar";
-import Redirect from "./components/Redirect";
-import { Inter } from 'next/font/google';
-const inter = Inter({ subsets: ['latin'] });
-import { NextRequest } from "next/server";
+import { Button } from "@/components/ui/button";
+import { Music, Users, ThumbsUp, PlusCircle } from 'lucide-react';
+import { useSession, signIn, signOut } from 'next-auth/react';
+import { useRouter } from 'next/navigation'; 
+import axios from "axios";
 
 export default function Home() {
+  const { data: session, status } = useSession(); // Destructure session data
+  const router = useRouter(); // Initialize useRouter
+
+  const handleGetStartedClick = async () => {
+    try {
+      const res = await axios.get("./api/auth/getUser", { withCredentials: true });
+      const creatorId = res.data.user.id;
+      console.log("creatorId", creatorId);
+      if (router && creatorId) {
+        router.push(`/dashboard?creatorId=${creatorId}`);
+        //router.push(`/dashboard`);
+      }
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+      alert("An error occurred. Please try again.");
+    }
+  };
+
   return (
     <main>
       <section className="text-center">
-      <Appbar/>
-      <Redirect />
         <h2 className="text-5xl font-bold mb-6 text-purple-800 dark:text-purple-300">
           Collaborative Music Streaming
         </h2>
         <p className="text-xl mb-8 text-gray-600 dark:text-gray-300">
           Create playlists, vote on songs, and stream music together with friends.
         </p>
-        <Button size="lg" className="bg-purple-600 hover:bg-purple-700 text-white">
+
+        <Button 
+          size="lg" 
+          className="bg-purple-600 hover:bg-purple-700 text-white"
+          onClick={handleGetStartedClick} 
+        >
           Get Started
         </Button>
       </section>
@@ -56,12 +74,21 @@ export default function Home() {
         <p className="text-xl mb-8 text-gray-600 dark:text-gray-300">
           Join VoteTune today and start creating collaborative playlists with your friends.
         </p>
-        <Button size="lg" className="bg-purple-600 hover:bg-purple-700 text-white">
-          Sign Up Now
-        </Button>
+
+        <div>
+          { !session?.user ? (
+            <Button onClick={() => signIn()} size="lg" className="bg-purple-600 hover:bg-purple-700 text-white">
+              Sign Up Now
+            </Button>
+          ) : (
+            <Button onClick={() => signOut()} size="lg" className="bg-purple-600 hover:bg-purple-700 text-white">
+              Sign Out
+            </Button>
+          )}
+        </div>
       </section>
     </main>
-  )
+  );
 }
 
 function FeatureCard({ icon, title, description }: { icon: React.ReactNode, title: string, description: string }) {
@@ -71,6 +98,5 @@ function FeatureCard({ icon, title, description }: { icon: React.ReactNode, titl
       <h3 className="text-xl font-semibold mb-2 text-purple-800 dark:text-purple-300">{title}</h3>
       <p className="text-gray-600 dark:text-gray-300">{description}</p>
     </div>
-  )
+  );
 }
-

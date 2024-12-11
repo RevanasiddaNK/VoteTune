@@ -73,6 +73,9 @@ export default function CurrentlyPlaying({
       return () => clearInterval(interval);
     }
   }, []);
+  useEffect(()=>{
+    playNext()
+  },[])
 
   useEffect(() => {
     if (playVideo && currentVideo) {
