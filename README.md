@@ -1,36 +1,59 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# VoteTune
+
+VoteTune is a collaborative music player app where a group of friends can select songs, vote for the next song to play, and enjoy a seamless music-sharing experience. The app allows users to create/join music parties, add songs to playlists, and vote on which song should play next, all in real time.
+
+## Project Overview
+
+VoteTune provides a fun, interactive music experience for friends and communities. It offers features such as user authentication, playlist management, and a voting system to decide the next song to play. The app aims to create a unique and shared music experience, bringing friends closer together through music.
+
+### Key Features
+
+- **User Authentication**: Secure login system with JWT-based authentication.
+- **Create/Join a Party**: Users can create a party or join an existing one with friends.
+- **Add Songs**: Users can add songs from YouTube to the party playlist.
+- **Vote System**: Members vote on which song should play next.
+- **Real-time Song Playing**: The song with the most votes gets played.
+- **Live Updates**: The app uses real-time communication to update votes and song transitions.
+
+## Technologies Used
+
+- **Frontend**:  
+  - **Next.js**: React framework for building the frontend.
+  - **TypeScript**: Static typing for JavaScript, improving code quality and maintainability.
+  - **Tailwind CSS**: Utility-first CSS framework for styling.
+  - **React**: JavaScript library for building user interfaces.
+  - **Zod**: Type-safe validation library for user input.
+  
+- **Authentication**:  
+  - **NextAuth.js**: Authentication library for Next.js.
+  
+- **Real-time Communication**:  
+  - **Socket.io**: To enable real-time communication for song votes and playback (long polling for now).
+
+- **Database**:  
+  - **Prisma ORM**: Database toolkit for interacting with MySQL.
+
 
 ## Getting Started
 
-First, run the development server:
+To run VoteTune locally, follow these steps:
 
-```bash
+### 1. Clone the repository
+Clone the VoteTune repository to your local machine:
+git clone https://github.com/RevanasiddaNK/VoteTune.git
+
+### 2. Install dependencies
+cd VoteTune
+npm install
+
+###  3. Set up environment variables
+GOOGLE_CLIENT_ID = xxxxx
+GOOGLE_CLIENT_SECRET = xxxxx
+NEXTAUTH_SECRET = "xxxxx"
+DATABASE_URL="mysql://root:xxxxx@localhost:3306/votetune"
+
+### 4. Start the project
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
