@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Music, Users, ThumbsUp, PlusCircle } from 'lucide-react';
 import { useSession, signIn, signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation'; 
+import toast from "react-hot-toast";
 import axios from "axios";
 
 export default function Home() {
@@ -20,8 +21,49 @@ export default function Home() {
         //router.push(`/dashboard`);
       }
     } catch (error) {
-      console.error("Error fetching user data:", error);
-      alert("An error occurred. Please try again.");
+      console.log("Error fetching user data:", error);
+      toast.custom((t) => (
+        <div
+          style={{
+            background: 'linear-gradient(135deg, #f39c12, #f1c40f)',
+            color: 'white',
+            padding: '15px 25px',
+            borderRadius: '10px',
+            fontSize: '18px',
+            fontWeight: '600',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
+            maxWidth: '800px',
+            margin: '0 auto',
+            transform: 'scale(1)',
+            transition: 'transform 0.3s ease, opacity 0.3s ease',
+            opacity: t.visible ? 1 : 0,
+          }}
+          className={`toast custom-toast ${t.visible ? 'show' : 'hide'}`}
+        >
+          <span style={{ marginRight: '15px' }}>⚠️ You must SignUp Now to enjoy the app!</span>
+          <button
+            onClick={() => toast.dismiss(t.id)}
+            style={{
+              background: 'transparent',
+              border: 'none',
+              color: 'white',
+              cursor: 'pointer',
+              fontSize: '18px',
+              padding: '0 5px',
+              borderRadius: '50%',
+              transition: 'transform 0.3s ease',
+            }}
+            onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.2)')}
+            onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
+          >
+            ✖
+          </button>
+        </div>
+      ));
+      
     }
   };
 
