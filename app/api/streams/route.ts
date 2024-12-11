@@ -20,7 +20,7 @@ const createStreamSchema = z.object({
 export async function POST(req: NextRequest, res: NextResponse) {
   try {
     const data = createStreamSchema.parse(await req.json());
-    //console.log("POST createStream", data);
+    console.log("POST createStream", data);
 
     // Ensure URL is a YouTube URL
     const isYoutube = YoutubeRegex.test(data.url);
@@ -116,7 +116,7 @@ export async function GET(req: NextRequest) {
     try {
         // Retrieve creatorId from query params
         const creatorId = req.nextUrl.searchParams.get("creatorId") || "";
-        //console.log(creatorId)
+        console.log(creatorId)
         // Fetch current user session
         const session = await getServerSession();
         if (!session || !session.user?.email) {
@@ -158,13 +158,9 @@ export async function GET(req: NextRequest) {
             await prismaClient.currentStream.findFirst({
                 where : {
                     userId: creatorId,
-                },
-                include : {
-                    stream : true,
                 }
-
             })
-    ]);
+        ]);
 
         // Format response
         return NextResponse.json({
@@ -173,6 +169,7 @@ export async function GET(req: NextRequest) {
                 upvotesCount: _count.upvotes,
                 haveUpvoted: upvotes?.some((upvote) => upvote.userId === user.id) ?? false,
             })),
+            activeStream : activeStream
         });
     } catch (error) {
         console.error("Error retrieving streams:", error);

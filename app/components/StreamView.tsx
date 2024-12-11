@@ -11,7 +11,7 @@ import axios from 'axios'
 const inter = Inter({ subsets: ['latin'] });
 
 export default function StreamView(
-    {creatorId, playVideo = false }: 
+    {creatorId, playVideo}: 
     { creatorId: string, playVideo : boolean }
 ){
    

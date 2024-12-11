@@ -32,27 +32,29 @@ enum Provider {
 }
 
 model Stream {
-  id             String         @id @default(uuid())
-  title          String         @default("Title not found")
-  bigThumbnail   String         @default("https://img.lovepik.com/photo/45014/5040.jpg_wh860.jpg")
-  smallThumbnail String         @default("https://img.freepik.com/premium-photo/3d-youtube-icon-neon-black-wall_289054-64.jpg")
+  id             String     @id @default(uuid())
+  title          String     @default("Title not found")
+  bigThumbnail   String     @default("https://img.lovepik.com/photo/45014/5040.jpg_wh860.jpg")
+  smallThumbnail String     @default("https://img.freepik.com/premium-photo/3d-youtube-icon-neon-black-wall_289054-64.jpg")
   url            String
-  isPlayed       Boolean        @default(false)
+  isPlayed       Boolean    @default(false)
   playedAt       DateTime?
-  createdAt      DateTime       @default(now())
+  createdAt      DateTime   @default(now())
   extractedId    String
   type           StreamType
-  User           User?          @relation(fields: [userId], references: [id])
+  User           User?      @relation(fields: [userId], references: [id])
   userId         String?
-  active         Boolean        @default(true)
+  active         Boolean    @default(true)
   upvotes        Upvote[]
-  currentStream  currentStream?
 }
 
 model currentStream {
-  userId   String  @id
-  streamId String? @unique
-  stream   Stream? @relation(fields: [streamId], references: [id])
+  userId         String  @id
+  title          String? @default("No Video Found") // Default if no title provided
+  url            String  @default("https://www.youtube.com/watch?v=87JIOAX3njM") // Default URL
+  bigThumbnail   String  @default("https://i.ytimg.com/vi/P1fIdFRnfqw/maxresdefault.jpg") // Default thumbnail
+  smallThumbnail String  @default("https://i.ytimg.com/vi/P1fIdFRnfqw/maxresdefault.jpg") // Default small thumbnail
+  extractedId    String  @default("87JIOAX3njM") // Default extracted ID
 }
 
 enum StreamType {

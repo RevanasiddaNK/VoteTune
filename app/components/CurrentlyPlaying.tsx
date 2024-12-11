@@ -31,8 +31,26 @@ export default function CurrentlyPlaying({
   const playNext = async () => {
     try {
       setPlayNextLoader(true);
-      const res = await axios.get("/api/streams/next", { withCredentials: true });
-      const videoData = res.data.stream;
+      if (playVideo) {
+        await axios.post("/api/streams/next", {}, { withCredentials: true });
+      }
+      await getCurrentVideoData();
+    } catch (error) {
+      console.error("Error handling stream update:", error);
+    } finally {
+      setPlayNextLoader(false);
+    }
+  };
+
+  const getCurrentVideoData = async () => {
+    try {
+      const res = await axios.get(`/api/streams?creatorId=${creatorId}`, { withCredentials: true });
+      const videoData = res.data.activeStream;
+
+      if (!videoData) {
+        throw new Error("No active stream found after update.");
+      }
+
       setCurrentVideo({
         title: videoData.title,
         url: videoData.url,
@@ -40,68 +58,69 @@ export default function CurrentlyPlaying({
         smallThumbnail: videoData.smallThumbnail,
         extractedId: videoData.extractedId,
       });
+
+    
     } catch (error) {
-      console.error("Error fetching next video:", error);
-    } finally {
-      setPlayNextLoader(false);
+      console.error("Error accessing video data:", error);
     }
   };
 
-
-
-
- 
-
+  const REFRESH_INTERVAL_MS = 1000; 
+  useEffect(() => {
+    if(!playVideo){
+      getCurrentVideoData()
+      const interval = setInterval(getCurrentVideoData, REFRESH_INTERVAL_MS);
+      return () => clearInterval(interval);
+    }
+  }, []);
 
   useEffect(() => {
-    if (!videoPlayerRef.current || !currentVideo) {
-      return;
-    }
-
-    const player: PlayerInstance = YouTubePlayer(videoPlayerRef.current);
-    player.loadVideoById(currentVideo.extractedId);
-    player.playVideo();
-
-    const handleStateChange = (event: any) => {
-      if (event.data === 0) {
-        // Video ended, play the next one
-        playNext();
+    if (playVideo && currentVideo) {
+      if (!videoPlayerRef.current) {
+        return;
       }
-    };
 
-    player.on("stateChange", handleStateChange);
+      const player: PlayerInstance = YouTubePlayer(videoPlayerRef.current);
+      player.loadVideoById(currentVideo.extractedId);
+      player.playVideo();
 
-    return () => {
-      player.destroy();
-    };
-  }, [currentVideo]);
+      const handleStateChange = (event: any) => {
+        if (event.data === 0) {
+          playNext();  // Play next when current video ends
+        }
+      };
+
+      player.on("stateChange", handleStateChange);
+
+      return () => {
+        player.destroy();
+      };
+    }
+  }, [currentVideo, playVideo]);  // Trigger when currentVideo or playVideo changes
 
   return (
     <div className="space-y-4">
-      
       <Card className="bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm">
-
         <CardContent className="p-4">
-        <h2 className="text-lg font-semibold mb-2 text-purple-800 dark:text-purple-200">
-                Now Playing
-        </h2>
+          <h2 className="text-lg font-semibold mb-2 text-purple-800 dark:text-purple-200">
+            Now Playing
+          </h2>
           {currentVideo ? (
-             <div className="aspect-video">
-              { playVideo ? (
+            <div>
+              {playVideo ? (
                 <div ref={videoPlayerRef} className="w-full" />
               ) : (
-                <>
+                <div className="relative w-full h-72">
                   <Image
-                    height={288}
-                    width={288}
-                    alt={currentVideo?.title || "Video thumbnail"}
+                    alt={currentVideo.title || "Video thumbnail"}
                     src={currentVideo.bigThumbnail}
-                    className="h-72 w-full rounded object-cover"
+                    fill
+                    className="rounded object-contain"
                   />
                   <p className="mt-2 text-center font-semibold">
-                    {currentVideo.title}
+                    {currentVideo.title.split("|")[0].trim()}
                   </p>
-                </>
+                </div>
               )}
             </div>
           ) : (

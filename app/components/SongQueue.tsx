@@ -28,7 +28,7 @@ export default function SongQueue(
 ) {
   const [queue, setQueue] = useState<Video[]>(initialQueue);
 
-  const REFRESH_INTERVAL_MS = 10 * 1000; // 10 seconds
+  const REFRESH_INTERVAL_MS = 1000;
 
   async function refreshStreams() {
     try {
@@ -79,7 +79,7 @@ export default function SongQueue(
                   className="w-20 h-12 object-cover rounded"
                 />
                 <div className="flex-grow">
-                  <h3 className="font-medium text-sm text-purple-700 dark:text-purple-300">{song.title}</h3>
+                  <h3 className="font-medium text-sm text-purple-700 dark:text-purple-300">{song.title.split("|")[0].trim()}</h3>
                 </div>
                 <div className="flex items-center space-x-1">
                 

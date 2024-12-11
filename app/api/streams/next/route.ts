@@ -1,9 +1,9 @@
 import { prismaClient } from "@/app/lib/db";
 import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
-import { Stream } from "stream";
 
-export async function GET(req : NextRequest){
+
+export async function POST(req : NextRequest){
 
     const session = await getServerSession();
     const user = await prismaClient.user.findFirst({
@@ -43,11 +43,19 @@ export async function GET(req : NextRequest){
             userId: user.id,
           },
           update: {
-            streamId: maxUpvotedStream?.id,
+            title     :   maxUpvotedStream?.title,
+            url          :  maxUpvotedStream?.url,
+            bigThumbnail  : maxUpvotedStream?.bigThumbnail,
+            smallThumbnail : maxUpvotedStream?.smallThumbnail,
+            extractedId   : maxUpvotedStream?. extractedId,
           },
           create: {
             userId: user.id,
-            streamId: maxUpvotedStream?.id,
+            title     :   maxUpvotedStream?.title,
+            url          :  maxUpvotedStream?.url,
+            bigThumbnail  : maxUpvotedStream?.bigThumbnail,
+            smallThumbnail : maxUpvotedStream?.smallThumbnail,
+            extractedId   : maxUpvotedStream?. extractedId,
           },
         });
       
@@ -63,7 +71,10 @@ export async function GET(req : NextRequest){
       
 
     return NextResponse.json({
-        stream : maxUpvotedStream,
-    });
+        message : "maxUpvotedStream is added to currentStream "
+    },{
+      status : 200
+    }
+  );
 
 }
