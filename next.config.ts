@@ -6,10 +6,10 @@ const nextConfig: NextConfig = {
     domains: ['i.ytimg.com'], // Add the hostname of the image
   },
   webpack: (config, { isServer }) => {
-    // Enable Turbopack in experimental mode
-    config.experimental = {
-      turbopack: true,
-    };
+    // Remove the experimental turbopack configuration
+    // config.experimental = {
+    //   turbopack: true,
+    // };
 
     if (!isServer) {
       // Exclude Node.js core modules from the client-side build
