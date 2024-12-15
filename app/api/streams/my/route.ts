@@ -4,18 +4,23 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest): Promise<NextResponse> {
   // Get session with user id included
-  const session = await getServerSession();
+      const session = await getServerSession();
+      const user = await prismaClient.user.findFirst({
+            where: {
+                email: session?.user?.email ?? "",
+            }
+        });
 
-  if (!session?.user?.email || !session?.user?.id) {
-    return NextResponse.json(
-      {
-        message: "unauthenticated",
-      },
-      {
-        status: 403,
-      }
-    );
-  }
+        //console.log("upvote user", user)
+        if(!user){
+            return NextResponse.json({
+                message : "unauthenticated"
+            },
+            {
+                status : 403,
+            }
+            );
+        }
 
   try {
     const creatorId = req.nextUrl.searchParams.get("creatorId");
@@ -23,7 +28,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     // Fetch streams based on userId (session user id)
     const streams = await prismaClient.stream.findMany({
       where: {
-        userId: session.user.id, // Now using session.user.id
+        userId: user.id, // Now using session.user.id
       },
       include: {
         _count: {
@@ -33,7 +38,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
         },
         upvotes: {
           where: {
-            userId: session.user.id,
+            userId: user.id,
           },
         },
       },
