@@ -1,16 +1,15 @@
-"use client";
-import { Button } from '@/components/ui/button';
-// Import necessary modules
-import { signIn } from 'next-auth/react'; // Function to initiate sign-in
+'use client'; // Mark as a client-side component
+import { Button } from '@/components/ui/button'; // Importing Button component
+import { signIn } from 'next-auth/react'; // Importing next-auth for sign-in
 import { useSearchParams } from 'next/navigation'; // For client-side navigation
+import React, { Suspense } from 'react';
 
-export default function SignIn() {
-  const searchParams = useSearchParams(); // Get query parameters from the URL
-  const callbackUrl = searchParams.get('callbackUrl') || '/'; // Default to '/' if no `callbackUrl` is present
+const SignIn = () => {
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get('callbackUrl') || '/'; // Default to '/' if no callbackUrl is present
 
   return (
     <div className="flex items-center justify-center h-screen text-center py-20 bg-purple-100 dark:bg-purple-900 rounded-lg">
-      {/* Login with Google */}
       <Button
         onClick={() => signIn('google', { callbackUrl: callbackUrl as string })}
         size="lg"
@@ -19,5 +18,14 @@ export default function SignIn() {
         Sign Up Now
       </Button>
     </div>
+  );
+};
+
+// Page component with Suspense for loading state
+export default function SignInPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <SignIn />
+    </Suspense>
   );
 }
