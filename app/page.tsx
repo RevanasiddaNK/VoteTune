@@ -87,15 +87,16 @@ export default function Home() {
       </section>
 
       <section className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 my-20">
-        <FeatureCard
-          icon={<Music className="h-10 w-10 text-purple-600" />}
-          title="Create Playlists"
-          description="Curate your perfect playlist and share it with friends."
-        />
+        
         <FeatureCard
           icon={<Users className="h-10 w-10 text-purple-600" />}
           title="Collaborate"
           description="Invite friends to add songs and shape the playlist together."
+        />
+        <FeatureCard
+          icon={<Radio className="h-10 w-10 text-purple-600" />}
+          title="Live Streaming"
+          description="Stream with real-time input."
         />
         <FeatureCard
           icon={<ThumbsUp className="h-10 w-10 text-purple-600" />}
@@ -107,6 +108,7 @@ export default function Home() {
           title="Discover Music"
           description="Find new tracks based on your group's tastes."
         />
+    
       </section>
 
       <section className="text-center py-20 bg-purple-100 dark:bg-purple-900 rounded-lg">
