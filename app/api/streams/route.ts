@@ -48,10 +48,9 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       );
     }
 
-
     const streamDetails = await youtubesearchapi.GetVideoDetails(extractedId);
-    console.log("Stream details:", streamDetails);
     
+
     if (!streamDetails || !streamDetails.thumbnail || !streamDetails.thumbnail.thumbnails) {
       console.log("Error3: Missing YouTube details or thumbnails");
       return NextResponse.json(
@@ -61,6 +60,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         { status: 500 }
       );
     }
+
+    console.log("Stream details:", streamDetails);
 
     const ImageUrls = streamDetails.thumbnail.thumbnails.sort(
       (a: { width: number }, b: { width: number }) => b.width - a.width
