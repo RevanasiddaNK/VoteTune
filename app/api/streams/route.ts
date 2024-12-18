@@ -17,94 +17,19 @@ const cors = Cors({
 var regex = /^(?:https?:\/\/)?(?:www\.)?(?:m\.)?(?:youtube\.com\/(?:watch\?(?!.*\blist=)(?:.*&)?v=|embed\/|v\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})(?:[?&]\S+)?$/;
 const YoutubeRegex = new RegExp(regex);
 
+function getYouTubeVideoID(url:string) {
+  const regex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S+?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})(?:[^\s]*)/;
+  const match = url.match(regex);
+  return match ? match[1] : null; // Return the video ID or null if not found
+}
+
 // Define the schema for creating a stream
 const createStreamSchema = z.object({
   creatorId: z.string(),
   url: z.string(),
 });
 
-/*
-export async function POST(req: NextRequest): Promise<NextResponse> {
-  try {
-    const data = createStreamSchema.parse(await req.json());
-    console.log("POST createStream", data);
 
-    const isYoutube = YoutubeRegex.test(data.url);
-    if (!isYoutube) {
-      console.log("Error: Provide a URL in correct format");
-      return NextResponse.json(
-        {
-          message: "Provide a URL in correct format",
-        },
-        { status: 411 }
-      );
-    }
-
-    const extractedId = (() => {
-      const match = data.url.match(
-        /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/]+\/[^\/]+|(?:v|e(?:mbed)?)\/|(?:watch\?v=))|youtu\.be\/)([a-zA-Z0-9_-]{11})/
-      );
-      return match ? match[1] : null;
-    })();
-
-    if (!extractedId) {
-      console.log("Error2: Invalid YouTube URL format");
-      return NextResponse.json(
-        {
-          message: "Invalid YouTube URL format",
-        },
-        { status: 411 }
-      );
-    }
-
-    const streamDetails = await youtubesearchapi.GetVideoDetails(extractedId);
-    console.log("Stream details:", streamDetails);
-
-    if (!streamDetails || !streamDetails.thumbnail || !streamDetails.thumbnail.thumbnails) {
-      console.log("Error3: Missing YouTube details or thumbnails");
-      return NextResponse.json(
-        {
-          message: "Could not fetch valid stream details from YouTube. Missing title or thumbnails.",
-        },
-        { status: 500 }
-      );
-    }
-
-    console.log("Stream details:", streamDetails);
-
-    const ImageUrls = streamDetails.thumbnail.thumbnails.sort(
-      (a: { width: number }, b: { width: number }) => b.width - a.width
-    );
-
-    const stream = await prismaClient.stream.create({
-      data: {
-        userId: data.creatorId ?? "",
-        url: data.url || "",
-        title: streamDetails.title ?? "Title not found", 
-        smallThumbnail: ImageUrls.length > 1 ? ImageUrls[1].url : ImageUrls[0].url,
-        bigThumbnail: ImageUrls[0].url,
-        extractedId: extractedId,
-        type: "Youtube",
-      },
-    });
-
-    console.log("Stream added:", stream);
-
-    return NextResponse.json({
-      message: "Stream added",
-      id: stream.id,
-    });
-  } catch (e) {
-    console.error("Error creating stream:", e);
-    return NextResponse.json(
-      {
-        message: "Error while adding stream",
-      },
-      { status: 411 }
-    );
-  }
-}
-*/
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
   try {
@@ -122,12 +47,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       );
     }
 
-    const extractedId = (() => {
-      const match = data.url.match(
-        /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\/]+\/[^\/]+|(?:v|e(?:mbed)?)\/|(?:watch\?v=))|youtu\.be\/)([a-zA-Z0-9_-]{11})/
-      );
-      return match ? match[1] : null;
-    })();
+    const extractedId =  getYouTubeVideoID(data.url);
 
     if (!extractedId) {
       console.log("Error2: Invalid YouTube URL format");
@@ -141,11 +61,11 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
     const streamDetails = await youtubesearchapi.GetVideoDetails(extractedId);
     console.log("Stream details:", streamDetails);
-    streamDetails.thumbnail = undefined
+  
     if (!streamDetails || !streamDetails.thumbnail || !streamDetails.thumbnail.thumbnails) {
       console.log("Warning: Missing YouTube details or thumbnails. Using default thumbnails.");
       // Fallback to default thumbnail URLs if no valid thumbnails are found
-      const defaultThumbnail = "https://example.com/default-thumbnail.jpg"; // Provide a valid default thumbnail URL
+    
 
       const stream = await prismaClient.stream.create({
         data: {
