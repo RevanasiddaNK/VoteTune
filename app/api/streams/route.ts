@@ -48,8 +48,6 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       );
     }
 
-    const streamDetails = await youtubesearchapi.GetVideoDetails(extractedId);
-    console.log("Stream details:", streamDetails?.thumbnail);
 
     const streamDetails = await youtubesearchapi.GetVideoDetails(extractedId);
     console.log("Stream details:", streamDetails);
