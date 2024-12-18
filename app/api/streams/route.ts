@@ -10,7 +10,7 @@ import Cors from 'cors';
 // Initialize the CORS middleware
 const cors = Cors({
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  origin: 'https://votetunez.vercel.app/', // The frontend domain you're allowing
+  origin: 'http://localhost:3000', // The frontend domain you're allowing
 });
 
 
