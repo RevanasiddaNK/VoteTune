@@ -41,7 +41,7 @@ export default function RootLayout({
             
             <header className="flex justify-between items-center mb-8 mx-4">
             
-              <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-indigo-500 dark:from-purple-300 dark:to-indigo-400">
+              <h1 className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-indigo-500 dark:from-purple-300 dark:to-indigo-400">
                 VoteTune
               </h1>  
               <ThemeToggle />
