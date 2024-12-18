@@ -5,6 +5,14 @@ import { z } from "zod";
 // @ts-ignore
 import youtubesearchapi from "youtube-search-api";
 import { getServerSession } from "next-auth";
+import Cors from 'cors';
+
+// Initialize the CORS middleware
+const cors = Cors({
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  origin: 'https://votetunez.vercel.app/', // The frontend domain you're allowing
+});
+
 
 var regex = /^(?:https?:\/\/)?(?:www\.)?(?:m\.)?(?:youtube\.com\/(?:watch\?(?!.*\blist=)(?:.*&)?v=|embed\/|v\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})(?:[?&]\S+)?$/;
 const YoutubeRegex = new RegExp(regex);
