@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from "@/components/ui/button";
-import { Music, Users, ThumbsUp, PlusCircle } from 'lucide-react';
+import { Radio, Users, ThumbsUp, PlusCircle } from 'lucide-react';
 import { useSession, signIn, signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation'; 
 import toast from "react-hot-toast";
