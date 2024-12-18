@@ -49,7 +49,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     }
 
     const streamDetails = await youtubesearchapi.GetVideoDetails(extractedId);
-    
+    console.log("Stream details:", streamDetails);
 
     if (!streamDetails || !streamDetails.thumbnail || !streamDetails.thumbnail.thumbnails) {
       console.log("Error3: Missing YouTube details or thumbnails");
