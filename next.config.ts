@@ -3,7 +3,7 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ['i.ytimg.com', 'img.lovepik.com', 'img.youtube.com],
+    domains: ['i.ytimg.com', 'img.lovepik.com', 'img.youtube.com'],
   },
   webpack: (config, { isServer }) => {
     // Remove the experimental turbopack configuration
