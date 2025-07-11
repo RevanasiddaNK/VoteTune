@@ -6,64 +6,47 @@ import { useSession, signIn, signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation'; 
 import toast from "react-hot-toast";
 import axios from "axios";
+import { FormEvent, useState } from "react";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 
 export default function Home() {
   const { data: session, status } = useSession(); // Destructure session data
   const router = useRouter(); // Initialize useRouter
 
-  const handleGetStartedClick = async () => {
+  const [name, setName] = useState("");
+  const [loading, setLoading] = useState(false);
+
+
+   const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+
+    if (!session?.user) {
+      toast.error("Please sign in first.");
+      return signIn();
+    }
+    if (!name.trim()) {
+      return toast.error("Name can’t be empty.");
+    }
+
     try {
-      const res = await axios.get("./api/auth/getUser", { withCredentials: true });
-      const creatorId = res.data.user.id;
-      console.log("creatorId", creatorId);
-      if (router && creatorId) {
-        router.push(`/dashboard?creatorId=${creatorId}`);
-        //router.push(`/dashboard`);
-      }
-    } catch (error) {
-      console.log("Error fetching user data:", error);
-      toast.custom((t) => (
-        <div
-          style={{
-            background: 'linear-gradient(135deg, #f39c12, #f1c40f)',
-            color: 'white',
-            padding: '15px 25px',
-            borderRadius: '10px',
-            fontSize: '18px',
-            fontWeight: '600',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)',
-            maxWidth: '800px',
-            margin: '0 auto',
-            transform: 'scale(1)',
-            transition: 'transform 0.3s ease, opacity 0.3s ease',
-            opacity: t.visible ? 1 : 0,
-          }}
-          className={`toast custom-toast ${t.visible ? 'show' : 'hide'}`}
-        >
-          <span style={{ marginRight: '15px' }}>⚠️ You must SignUp Now to enjoy the app!</span>
-          <button
-            onClick={() => toast.dismiss(t.id)}
-            style={{
-              background: 'transparent',
-              border: 'none',
-              color: 'white',
-              cursor: 'pointer',
-              fontSize: '18px',
-              padding: '0 5px',
-              borderRadius: '50%',
-              transition: 'transform 0.3s ease',
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.2)')}
-            onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
-          >
-            ✖
-          </button>
-        </div>
-      ));
+      setLoading(true);
+      const res = await fetch("/api/playlists", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name }),
+      });
+
+      if (!res.ok) throw new Error(await res.text());
+      const data = await res.json(); // { id: ... }
       
+      const creatorId = session?.user;
+      router.push(`/dashboard?creatorId=${creatorId}`);
+    } catch (err: any) {
+      console.error(err);
+      toast.error("Failed to create playlist.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -77,13 +60,27 @@ export default function Home() {
           Create playlists, vote on songs, and stream music together with friends.
         </p>
 
-        <Button 
-          size="lg" 
-          className="bg-purple-600 hover:bg-purple-700 text-white"
-          onClick={handleGetStartedClick} 
+        <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <Label htmlFor="playlist-name">Name</Label>
+          <Input
+            id="playlist-name"
+            placeholder="e.g. Road‑trip Bangers"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            required
+          />
+        </div>
+
+        <Button
+          type="submit"
+          disabled={loading}
+          className="w-full bg-purple-600 hover:bg-purple-700 text-white"
         >
-          Get Started
+          {loading ? "Creating…" : "Create Playlist"}
         </Button>
+      </form>
+
       </section>
 
       <section className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 my-20">
