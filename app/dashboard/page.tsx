@@ -9,15 +9,15 @@ const inter = Inter({ subsets: ['latin'] });
 
 const Dashboard = () => {
   const searchParams = useSearchParams();
-  const creatorId = searchParams.get('creatorId'); // Retrieve the creatorId query parameter
+  const playlistId = searchParams.get('playlistId'); 
 
-  // Handle invalid creatorId (if not a string)
-  if (typeof creatorId !== 'string') {
-    return <div>Invalid creator ID</div>; // Show error or fallback UI
+  console.log("playlistId",playlistId)
+  if (typeof playlistId !== 'string') {
+    return <div><div>Loading...</div></div>; 
   }
 
   return (
-    <StreamView creatorId={creatorId} playVideo={true} />
+    <StreamView playlistId = {playlistId} playVideo={true} />
   );
 };
 

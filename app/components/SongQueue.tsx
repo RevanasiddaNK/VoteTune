@@ -24,7 +24,7 @@ interface Video {
 const initialQueue: Video[] = [];
 
 export default function SongQueue(
-  {creatorId}: { creatorId: string }
+  {playlistId}: { playlistId: string }
 ) {
   const [queue, setQueue] = useState<Video[]>(initialQueue);
 
@@ -32,7 +32,7 @@ export default function SongQueue(
 
   async function refreshStreams() {
     try {
-      const res = await axios.get(`/api/streams?creatorId=${creatorId}`, { withCredentials: true });
+      const res = await axios.get(`/api/streams?playlistId=${playlistId}`, { withCredentials: true });
       console.log('Streams refreshed:', res.data);
       setQueue(Array.isArray(res.data.streams) ? res.data.streams.sort((a : any, b: any) => b.upvotesCount - a.upvotesCount) : []); // Ensure it's an array
     } catch (err) {

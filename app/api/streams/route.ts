@@ -25,7 +25,7 @@ function getYouTubeVideoID(url:string) {
 
 // Define the schema for creating a stream
 const createStreamSchema = z.object({
-  creatorId: z.string(),
+  playlistId: z.string(),
   url: z.string(),
 });
 
@@ -33,8 +33,38 @@ const createStreamSchema = z.object({
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
   try {
+
+    const session = await getServerSession();
+        if (!session || !session.user?.email) {
+            return NextResponse.json(
+                { status: 401, message: "User not authenticated" },
+                { status: 401 }
+            );
+        }
+
+        // Fetch user from database
+        const userData = await prismaClient.user.findFirst({
+            where: { email: session.user.email },
+        });
+
+        if (!userData) {
+            return NextResponse.json(
+                { status: 404, message: "User not found" },
+                { status: 404 }
+            );
+        }
+
     const data = createStreamSchema.parse(await req.json());
     console.log("POST createStream", data);
+
+    const playlist = await prismaClient.playlist.findUnique({
+      where: { id: data.playlistId }
+    });
+
+    if (!playlist) {
+      return NextResponse.json({ message: "Invalid playlistId" }, { status: 404 });
+    }
+
 
     const isYoutube = YoutubeRegex.test(data.url);
     if (!isYoutube) {
@@ -65,11 +95,12 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     if (!streamDetails || !streamDetails.thumbnail || !streamDetails.thumbnail.thumbnails) {
       console.log("Warning: Missing YouTube details or thumbnails. Using default thumbnails.");
       // Fallback to default thumbnail URLs if no valid thumbnails are found
-    
+        
 
       const stream = await prismaClient.stream.create({
         data: {
-          userId: data.creatorId ?? "",
+          addedById : userData.id,
+          playlistId : data.playlistId,
           url: data.url || "",
           title: streamDetails?.title ?? "Title not found", 
           smallThumbnail: `https://img.youtube.com/vi/${extractedId}/hqdefault.jpg`,
@@ -99,7 +130,8 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
     const stream = await prismaClient.stream.create({
       data: {
-        userId: data.creatorId ?? "",
+        addedById : userData.id,
+        playlistId : data.playlistId,
         url: data.url || "",
         title: streamDetails.title ?? "Title not found", 
         smallThumbnail,
@@ -116,7 +148,7 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
       id: stream.id,
     });
   } catch (e) {
-    console.error("Error creating stream:", e);
+    console.error("Error creating stream:", e instanceof Error? e.message : e );
     return NextResponse.json(
       {
         message: "Error while adding stream",
@@ -129,9 +161,9 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
 
 export async function GET(req: NextRequest) {
   try {
-      // Retrieve creatorId from query params
-      const creatorId = req.nextUrl.searchParams.get("creatorId") || "";
-      console.log(creatorId)
+    
+      const playlistId = req.nextUrl.searchParams.get("playlistId") || "";
+      console.log(playlistId)
       // Fetch current user session
       const session = await getServerSession();
       if (!session || !session.user?.email) {
@@ -153,41 +185,44 @@ export async function GET(req: NextRequest) {
           );
       }
 
-      if (!creatorId) {
+      if (!playlistId) {
           return NextResponse.json(
               { status: 403, message: "Invalid creator" },
               { status: 403 }
           );
       }
 
-      // Fetch streams for the creator
-      const [streams, activeStream] = await Promise.all([ 
-           await prismaClient.stream.findMany({
-              where: { userId: creatorId },
-              include: {
-                  _count: { select: { upvotes: true } },
-                  upvotes: { where: { userId: user.id } },
-              },
+              // --- inputs ---
+        // playlistId : string  ( required, comes from the query or params)
+        // user       : { id: string }  (logged‑in user)
+
+        const [streams, activeStream] = await Promise.all([
+          prismaClient.stream.findMany({
+            where: { playlistId },
+            include: {
+              _count: { select: { upvotes: true } },
+              upvotes: { where: { userId: user.id } },
+            },
+            orderBy: { createdAt: "asc" }, 
           }),
 
-          await prismaClient.currentStream.findFirst({
-              where : {
-                  userId: creatorId,
-              }
-          })
-      ]);
-     // console.log("Streams", streams, activeStream)
+          prismaClient.currentStream.findUnique({
+            where: { playlistId }, 
+          }),
+        ]);
 
-      // Format response
-      return NextResponse.json({
+        return NextResponse.json({
           streams: streams.map(({ _count, upvotes, ...rest }) => ({
-              ...rest,
-              upvotesCount: _count.upvotes,
-              haveUpvoted: upvotes?.some((upvote) => upvote.userId === user.id) ?? false,
+            ...rest,
+            upvotesCount: _count.upvotes,
+            haveUpvoted:
+              upvotes?.some((upvote) => upvote.userId === user.id) ?? false,
           })),
-          activeStream: activeStream
-      });
-  } catch (error) {
+          activeStream,
+        });
+
+     
+    }catch (error) {
       console.log("Error retrieving streams");
       
       // Returning proper JSON response with status code 500

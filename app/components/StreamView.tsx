@@ -11,8 +11,8 @@ import axios from 'axios'
 const inter = Inter({ subsets: ['latin'] });
 
 export default function StreamView(
-    {creatorId, playVideo}: 
-    { creatorId: string, playVideo : boolean }
+    {playlistId, playVideo}: 
+    { playlistId: string, playVideo : boolean }
 ){
    
   return (
@@ -22,20 +22,20 @@ export default function StreamView(
         <div className="flex justify-between items-center mb-4">
         
           <div className="flex space-x-2">
-            <ShareButton creatorId = {creatorId} />
+            <ShareButton playlistId = {playlistId} />
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         
           
-          <CurrentlyPlaying creatorId={creatorId} playVideo = {playVideo} />
+          <CurrentlyPlaying playlistId={playlistId} playVideo = {playVideo} />
 
-          <SongSubmission  creatorId = {creatorId}/>
+          <SongSubmission  playlistId = {playlistId}/>
         
         </div>
 
-        <SongQueue creatorId = {creatorId} />
+        <SongQueue playlistId = {playlistId} />
       </main>
     </div>
   )

@@ -8,7 +8,7 @@ import { Inter } from 'next/font/google';
 const inter = Inter({ subsets: ['latin'] });
 
 export default function SongSubmission(
-  {creatorId}: { creatorId: string }
+  {playlistId}: { playlistId: string }
 ) {
   const [videoUrl, setVideoUrl] = useState('')
   const [previewId, setPreviewId] = useState('')
@@ -20,7 +20,7 @@ export default function SongSubmission(
 
       const res = await axios.post("../api/streams", 
         {
-          creatorId : creatorId,
+          playlistId : playlistId,
           url: videoUrl
         },
         { withCredentials: true },

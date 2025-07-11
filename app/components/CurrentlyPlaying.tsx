@@ -18,10 +18,10 @@ type Video = {
 };
 
 export default function CurrentlyPlaying({
-  creatorId,
+  playlistId,
   playVideo,
 }: {
-  creatorId: string;
+  playlistId: string;
   playVideo: boolean;
 }) {
   const [currentVideo, setCurrentVideo] = useState<Video | null>(null);
@@ -32,7 +32,7 @@ export default function CurrentlyPlaying({
     try {
       setPlayNextLoader(true);
       if (playVideo) {
-        await axios.post("/api/streams/next", {}, { withCredentials: true });
+        await axios.post(`/api/streams/next?playlistId=${playlistId}`, {}, { withCredentials: true });
       }
       await getCurrentVideoData();
     } catch (error) {
@@ -44,7 +44,7 @@ export default function CurrentlyPlaying({
 
   const getCurrentVideoData = async () => {
     try {
-      const res = await axios.get(`/api/streams?creatorId=${creatorId}`, { withCredentials: true });
+      const res = await axios.get(`/api/streams?playlistId=${playlistId}`, { withCredentials: true });
       const videoData = res.data.activeStream;
 
       if (!videoData) {

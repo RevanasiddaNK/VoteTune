@@ -40,8 +40,15 @@ export default function Home() {
       if (!res.ok) throw new Error(await res.text());
       const data = await res.json(); // { id: ... }
       
-      const creatorId = session?.user;
-      router.push(`/dashboard?creatorId=${creatorId}`);
+      const { playlist, joined } = data;
+
+      if(joined) {
+        toast("Joined existing playlist!");
+      } else {
+        toast("Created new playlist!");
+      }
+    
+      router.push(`/dashboard?playlistId=${playlist.id}`);
     } catch (err: any) {
       console.error(err);
       toast.error("Failed to create playlist.");
@@ -77,7 +84,7 @@ export default function Home() {
           disabled={loading}
           className="w-full bg-purple-600 hover:bg-purple-700 text-white"
         >
-          {loading ? "Creating…" : "Create Playlist"}
+          {loading ? "Creating…" : "Create or Join Playlist"}
         </Button>
       </form>
 

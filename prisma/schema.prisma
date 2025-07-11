@@ -14,12 +14,14 @@ datasource db {
 }
 
 model User {
-  id       String   @id @default(uuid())
-  email    String   @unique
+  id       String     @id @default(uuid())
+  email    String     @unique
   //role     Role
   provider Provider
-  streams  Stream[]
   upvotes  Upvote[]
+  Playlist Playlist[]
+
+  streamsAdded Stream[] @relation("StreamAddedBy")
 }
 
 // enum Role {
@@ -28,7 +30,7 @@ model User {
 // }
 
 enum Provider {
-  Google
+  Google @map("google")
 }
 
 model Stream {
@@ -42,28 +44,45 @@ model Stream {
   createdAt      DateTime   @default(now())
   extractedId    String
   type           StreamType
-  User           User?      @relation(fields: [userId], references: [id])
-  userId         String?
-  active         Boolean    @default(true)
-  upvotes        Upvote[]
-  Playlist       Playlist?  @relation(fields: [playlistId], references: [id])
-  playlistId     String?
+
+  active  Boolean  @default(true)
+  upvotes Upvote[]
+
+  playlistId String
+  playlist   Playlist? @relation(fields: [playlistId], references: [id], onDelete: Cascade)
+
+  addedById String
+  addedBy   User   @relation("StreamAddedBy", fields: [addedById], references: [id])
+
+  @@index([playlistId])
+  @@index([addedById])
+  @@index([createdAt])
 }
 
 model Playlist {
-  id        String   @id @default(uuid())
-  name      String
-  streams   Stream[]
-  createdAt DateTime @default(now())
+  id      String   @id @default(uuid())
+  name    String   @db.VarChar(255)
+  streams Stream[]
+
+  createdAt     DateTime        @default(now())
+  userId        String
+  createdBy     User?           @relation(fields: [userId], references: [id])
+  currentStream currentStream[]
+
+  @@index([name]) //Fast look ups by name
 }
 
 model currentStream {
-  userId         String  @id
+  playlistId String   @id
+  playlist   Playlist @relation(fields: [playlistId], references: [id], onDelete: Cascade)
+
   title          String? @default("No Video Found") // Default if no title provided
   url            String  @default("https://www.youtube.com/watch?v=87JIOAX3njM") // Default URL
   bigThumbnail   String  @default("https://i.ytimg.com/vi/P1fIdFRnfqw/maxresdefault.jpg") // Default thumbnail
   smallThumbnail String  @default("https://i.ytimg.com/vi/P1fIdFRnfqw/maxresdefault.jpg") // Default small thumbnail
   extractedId    String  @default("87JIOAX3njM") // Default extracted ID
+
+  @@unique([playlistId]) // only one current stream per playlist
 }
 
 enum StreamType {
@@ -72,11 +91,11 @@ enum StreamType {
 }
 
 model Upvote {
-  id       String  @id @default(uuid())
-  User     User?   @relation(fields: [userId], references: [id])
-  userId   String?
-  Stream   Stream? @relation(fields: [streamId], references: [id], onDelete: Cascade)
-  streamId String?
+  id       String @id @default(uuid())
+  User     User   @relation(fields: [userId], references: [id])
+  userId   String
+  Stream   Stream @relation(fields: [streamId], references: [id], onDelete: Cascade)
+  streamId String
 
   @@unique([userId, streamId])
 }
