@@ -16,5 +16,5 @@ export default withAuth(
 
 // Configure which routes to protect
 export const config = {
-    matcher: ['/creator/:path*', '/'], // Matches all routes under `/creator`, including dynamic ones
+    matcher: ['/dashboard', '/dashboard/:path*', '/'], 
 };
