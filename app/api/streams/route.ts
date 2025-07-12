@@ -57,6 +57,21 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     const data = createStreamSchema.parse(await req.json());
     console.log("POST createStream", data);
 
+    const existingCount = prismaClient.stream.count({
+      where : {
+        playlistId : data.playlistId,
+        addedById : userData.id
+      }
+    });
+
+   if ( await existingCount >= 5) {
+    return NextResponse.json(
+      { message: "You can only add up to 5 currently existing songs in this playlist." },
+      { status: 400 }
+      );
+  }
+
+
     const playlist = await prismaClient.playlist.findUnique({
       where: { id: data.playlistId }
     });

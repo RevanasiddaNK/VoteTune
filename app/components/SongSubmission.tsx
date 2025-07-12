@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
 import axios from 'axios'
 import { Inter } from 'next/font/google';
+import toast from 'react-hot-toast'
 const inter = Inter({ subsets: ['latin'] });
 
 export default function SongSubmission(
@@ -25,14 +26,23 @@ export default function SongSubmission(
         },
         { withCredentials: true },
        );
-
-      console.log(res);
       
+       toast.success('Song added to the playlist!')
+
+      //console.log(res);
+    } catch (error) {
+      if(axios.isAxiosError(error)){
+      const msg = error?.response?.data?.message ||
+        'Something went wrong while adding the song.'
+      toast.error(msg)
+      }else{
+        toast.error("Network error.")
+      }
+    }
+    finally{
       setLoading(false);
       setVideoUrl('')
       setPreviewId('')
-    } catch (error) {
-      console.log("Error at HandleAddSong at Client side")
     }
   }
 
