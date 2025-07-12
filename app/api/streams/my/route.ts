@@ -28,7 +28,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     // Fetch streams based on userId (session user id)
     const streams = await prismaClient.stream.findMany({
       where: {
-        userId: user.id, // Now using session.user.id
+        addedById: user.id, 
       },
       include: {
         _count: {
