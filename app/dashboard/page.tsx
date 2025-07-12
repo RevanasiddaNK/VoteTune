@@ -9,7 +9,8 @@ const inter = Inter({ subsets: ['latin'] });
 
 const Dashboard = () => {
   const searchParams = useSearchParams();
-  const playlistId = searchParams.get('playlistId'); 
+  const playlistId = searchParams.get("playlistId");
+  const playVideo = searchParams.get("playVideo") === "true";
 
   console.log("playlistId",playlistId)
   if (typeof playlistId !== 'string') {
@@ -17,7 +18,7 @@ const Dashboard = () => {
   }
 
   return (
-    <StreamView playlistId = {playlistId} playVideo={true} />
+    <StreamView playlistId = {playlistId} playVideo={playVideo} />
   );
 };
 

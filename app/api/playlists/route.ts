@@ -3,13 +3,13 @@ import { getServerSession } from "next-auth";
 import { prismaClient } from "@/app/lib/db";
 
 export async function POST(req: NextRequest) {
-  /* --------------- Validate request body --------------- */
+  
   const { name } = await req.json();
   if (!name || typeof name !== "string") {
     return NextResponse.json({ error: "Invalid name" }, { status: 400 });
   }
 
-  /* --------------- Auth & current user --------------- */
+
   const session = await getServerSession();
   if (!session?.user?.email) {
     return NextResponse.json({ message: "unauthenticated" }, { status: 401 });
@@ -22,31 +22,39 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ message: "User not found" }, { status: 404 });
   }
 
-  /* --------------- Create or join logic --------------- */
   try {
-    // 1. Check for an existing playlist with the same name
+ 
     const existing = await prismaClient.playlist.findFirst({
-      where: { name },           // case‑sensitive match; use mode: "insensitive" for ci
+      where: { name },              
     });
 
-    // 2. If it exists -> "join" it (return as is)
     if (existing) {
+      const playVideo = existing.userId === user.id;
       return NextResponse.json(
-        { playlist: existing, joined: true },
+        {
+          playlist: existing,
+          joined: true,
+          playVideo,                  
+        },
         { status: 200 }
       );
     }
 
-    // 3. Otherwise create it
+    
     const created = await prismaClient.playlist.create({
       data: {
         name,
-        userId: user.id, // owner
+        userId: user.id,
       },
     });
 
+    // user just created it, so playVideo is always true
     return NextResponse.json(
-      { playlist: created, joined: false },
+      {
+        playlist: created,
+        joined: false,
+        playVideo: true,
+      },
       { status: 201 }
     );
   } catch (err) {

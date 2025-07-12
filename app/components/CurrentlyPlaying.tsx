@@ -28,6 +28,7 @@ export default function CurrentlyPlaying({
   const [playNextLoader, setPlayNextLoader] = useState(false);
   const videoPlayerRef = useRef<HTMLDivElement | null>(null);
 
+
   const playNext = async () => {
     try {
       setPlayNextLoader(true);

@@ -1,6 +1,6 @@
 import { prismaClient } from "app/lib/db";
 import { NextRequest, NextResponse } from "next/server";
-import { z } from "zod";
+import { boolean, z } from "zod";
 
 // @ts-ignore
 import youtubesearchapi from "youtube-search-api";
@@ -191,7 +191,18 @@ export async function GET(req: NextRequest) {
               { status: 403 }
           );
       }
+      const playlist = await prismaClient.playlist.findUnique({
+        where: { id: playlistId },
+      });
 
+    if (!playlist) {
+      return NextResponse.json(
+        { message: "Playlist not found" },
+        { status: 404 }
+      );
+    }
+
+       
               // --- inputs ---
         // playlistId : string  ( required, comes from the query or params)
         // user       : { id: string }  (logged‑in user)
@@ -210,6 +221,8 @@ export async function GET(req: NextRequest) {
             where: { playlistId }, 
           }),
         ]);
+
+
 
         return NextResponse.json({
           streams: streams.map(({ _count, upvotes, ...rest }) => ({
